@@ -1,7 +1,4 @@
-document.getElementById('infoButton').addEventListener('click', function () {
-	// Показать скрытый блок
-	document.getElementById('info').style.display = 'block'
-
+window.onload = function () {
 	// Получить IP и страну
 	fetch('https://ipapi.co/json/')
 		.then(response => response.json())
@@ -54,7 +51,7 @@ document.getElementById('infoButton').addEventListener('click', function () {
 		document.getElementById('memory').textContent =
 			'Информация о памяти недоступна'
 	}
-})
+}
 
 function getOS() {
 	let userAgent = window.navigator.userAgent
