@@ -1,34 +1,73 @@
 <!DOCTYPE html>
-<html lang="ru">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Информация о посетителе</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				text-align: center;
-				margin-top: 50px;
-			}
-			#info {
-				margin-top: 20px;
-			}
-		</style>
-	</head>
-	<body>
-		<h1>Информация о вас</h1>
-		<div id="info">
-			<p id="ip"></p>
-			<p id="country"></p>
-			<p id="time"></p>
-			<p id="os"></p>
-			<p id="browser"></p>
-			<p id="language"></p>
-			<p id="screenResolution"></p>
-			<p id="userAgent"></p>
-			<p id="cpuCores"></p>
-			<p id="memory"></p>
-		</div>
-		<script src="script.js"></script>
-	</body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Летящие звезды</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const stars = [];
+    const layers = 6;
+    const starCount = 200;
+    const frontLayerRatio = 0.4;
+
+    function createStars() {
+      stars.length = 0;
+
+      for (let i = 0; i < starCount; i++) {
+        const isFrontLayer = Math.random() < frontLayerRatio;
+        const depth = isFrontLayer ? Math.random() * 2 + 1 : Math.random() * (layers - 2) + 3;
+
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * (3 / depth) + 1,
+          speed: (0.2 / depth) + 0.05
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'white';
+      for (const star of stars) {
+        ctx.fillRect(star.x, star.y, star.size, star.size);
+        star.y -= star.speed;
+        if (star.y < 0) {
+          star.y = height;
+          star.x = Math.random() * width;
+        }
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      createStars();
+    });
+
+    createStars();
+    drawStars();
+  </script>
+</body>
 </html>
