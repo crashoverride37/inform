@@ -46,7 +46,7 @@ function createStars() {
       size: Math.random() * (3 / depth) + 1,
       speed: (0.4 / depth) + 0.1,
       alpha: Math.random() * 0.5 + 0.5,
-      flicker: Math.random() * 0.02 + 0.01, // Для мерцания
+      flicker: Math.random() * 0.02 + 0.01,
       color
     });
   }
@@ -56,7 +56,6 @@ function drawStars() {
   ctx.clearRect(0, 0, width, height);
 
   for (const star of stars) {
-    // Создаём градиент для звезды
     const gradient = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.size);
     const starColor = star.color === "yellow" ? `rgba(255, 255, 0, ${star.alpha})` :
                       star.color === "blue" ? `rgba(0, 191, 255, ${star.alpha})` :
@@ -71,10 +70,9 @@ function drawStars() {
     ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
     ctx.fill();
 
-    // Двигаем звезду
     star.y -= star.speed;
-    star.alpha += star.flicker * (Math.random() > 0.5 ? 1 : -1); // Мерцание
-    if (star.alpha < 0.5 || star.alpha > 1) star.flicker *= -1; // Ограничиваем альфа
+    star.alpha += star.flicker * (Math.random() > 0.5 ? 1 : -1);
+    if (star.alpha < 0.5 || star.alpha > 1) star.flicker *= -1;
 
     if (star.y < 0) {
       star.y = height;
