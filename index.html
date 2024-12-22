@@ -1,73 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Летящие звезды</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background-color: black;
-    }
-    canvas {
-      display: block;
-    }
-  </style>
+  <title>Летящие звезды!</title>
 </head>
 <body>
   <canvas id="stars"></canvas>
+  <style>
+    body {
+  margin: 0;
+  overflow: hidden;
+  background-color: black;
+}
 
+canvas {
+  display: block;
+}
+
+  </style>
   <script>
     const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
 
-    const stars = [];
-    const layers = 6;
-    const starCount = 200;
-    const frontLayerRatio = 0.4;
+const stars = [];
+const layers = 6;
+const starCount = 300;
+const frontLayerRatio = 0.4;
+const colors = ["yellow", "blue", "white", "lightyellow", "lightblue"];
 
-    function createStars() {
-      stars.length = 0;
+function createStars() {
+  stars.length = 0;
 
-      for (let i = 0; i < starCount; i++) {
-        const isFrontLayer = Math.random() < frontLayerRatio;
-        const depth = isFrontLayer ? Math.random() * 2 + 1 : Math.random() * (layers - 2) + 3;
+  for (let i = 0; i < starCount; i++) {
+    const isFrontLayer = Math.random() < frontLayerRatio;
+    const depth = isFrontLayer ? Math.random() * 2 + 1 : Math.random() * (layers - 2) + 3;
+    const color = colors[Math.floor(Math.random() * colors.length)];
 
-        stars.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          size: Math.random() * (3 / depth) + 1,
-          speed: (0.2 / depth) + 0.05
-        });
-      }
-    }
-
-    function drawStars() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = 'white';
-      for (const star of stars) {
-        ctx.fillRect(star.x, star.y, star.size, star.size);
-        star.y -= star.speed;
-        if (star.y < 0) {
-          star.y = height;
-          star.x = Math.random() * width;
-        }
-      }
-      requestAnimationFrame(drawStars);
-    }
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      createStars();
+    stars.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * (3 / depth) + 1,
+      speed: (0.4 / depth) + 0.1,
+      alpha: Math.random() * 0.5 + 0.5,
+      flicker: Math.random() * 0.02 + 0.01, // Для мерцания
+      color
     });
+  }
+}
 
-    createStars();
-    drawStars();
+function drawStars() {
+  ctx.clearRect(0, 0, width, height);
+
+  for (const star of stars) {
+    // Создаём градиент для звезды
+    const gradient = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.size);
+    const starColor = star.color === "yellow" ? `rgba(255, 255, 0, ${star.alpha})` :
+                      star.color === "blue" ? `rgba(0, 191, 255, ${star.alpha})` :
+                      `rgba(255, 255, 255, ${star.alpha})`;
+
+    gradient.addColorStop(0, starColor);
+    gradient.addColorStop(0.8, `rgba(255, 255, 255, ${star.alpha * 0.5})`);
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Двигаем звезду
+    star.y -= star.speed;
+    star.alpha += star.flicker * (Math.random() > 0.5 ? 1 : -1); // Мерцание
+    if (star.alpha < 0.5 || star.alpha > 1) star.flicker *= -1; // Ограничиваем альфа
+
+    if (star.y < 0) {
+      star.y = height;
+      star.x = Math.random() * width;
+    }
+  }
+
+  requestAnimationFrame(drawStars);
+}
+
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+  createStars();
+});
+
+createStars();
+drawStars();
+
   </script>
 </body>
 </html>
